@@ -12,21 +12,21 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <a class="navbar-brand" href="#">Search Engine</a>
         <div class="container">
-            <form class="navbar-form navbar-left">
-                <input type="text" id="search_bar" class="form-control" placeholder="Search">
-                <a href="#">
-                    <span class="glyphicon glyphicon-search"></span>
-                </a>
-            </form>
+            {{=search_form}}
         </div>
     </div>
 
     <div class="container" id="body_container">
         <ul class="nav nav-tabs">
-            <li><a href="#">TF</a></li>
-            <li><a href="#">TF-IDF</a></li>
-            <li><a href="#">BM25</a></li>
+            <li><a data-toggle="tab" href="#tf">TF</a></li>
+            <li><a data-toggle="tab" href="#tf_idf">TF-IDF</a></li>
+            <li><a data-toggle="tab" href="#bm25">BM25</a></li>
         </ul>
+        <div class="tab-content">
+            <div id="tf" class="tab-pane">Tab1</div>
+            <div id="tf_idf" class="tab-pane">Tab2</div>
+            <div id="bm25" class="tab-pane">Tab3</div>
+        </div>
     </div>
 
     <div class="flash">{{=response.flash or ''}}</div>
