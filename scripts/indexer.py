@@ -3,16 +3,29 @@ from os import walk
 from whoosh import index
 from whoosh.fields import Schema, ID, TEXT
 from whoosh.qparser import QueryParser
+import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
+
+BASEDIR = "/home/v_akshay/Desktop/version2.0/"
 
 templist = []
 doclist = []
+
+def beautify(text):
+    soup = BeautifulSoup(text)
+
+    [s.extract()
+     for s in soup
+     (['style', 'script', '[document]', 'head', 'title'])]
+    all_text=soup.getText()
+    return all_text
 
 def build_doclist(mypath):
     for (dirpath, dirnames, filenames) in walk(mypath):
         templist.extend(filenames)
         break
     for filename in templist:
-        fullpath = mypath + "/" + filename
+        fullpath = BASEDIR + "db/" + filename
         doclist.append(fullpath)
 
 def build_index(dirname):
@@ -33,17 +46,21 @@ def get_schema():
 
 
 def add_doc(writer, path):
-    fileobj = open(path, "rb")
+    fileobj = open(path, "r")
     content = fileobj.read()
     fileobj.close()
-    content = content.decode('UTF-8','ignore')
+    print content
+    content = beautify(content)
+    print "Scrapped ---------------------"
+    print content
+    #content = content.decode('UTF-8','ignore')
     writer.add_document(path=unicode(path), content=unicode(content))
 
 
 def main():
-    dirname = "/home/v_akshay/Desktop/index"
+    dirname = BASEDIR+"index/"
     #build dovument list
-    build_doclist("/home/v_akshay/Desktop/db")
+    build_doclist(BASEDIR+"db")
     print doclist
     build_index(dirname)
     print "thats it"
