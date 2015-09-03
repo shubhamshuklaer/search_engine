@@ -8,5 +8,11 @@ def index():
     if search_form.process().accepted:
         search_query=search_form.vars.search_query
         response.flash=search_query
-    return dict(search_form=search_form)
+
+    tabs=[
+            {"name":"TF","id":"tf"},
+            {"name":"TF-IDF","id":"tf_idf"},
+            {"name":"BM25","id":"b25"}
+            ]
+    return dict(search_form=search_form, tabs=tabs)
 
