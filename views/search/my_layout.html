@@ -13,7 +13,11 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <a class="navbar-brand" href="#">Search Engine</a>
         <div class="container">
-            {{=search_form}}
+            <form class="navbar-form navbar-left" id="search_form">
+                <input type="text" name="search_bar" placeholder="Search Term" id="search_bar" class="form-control">
+                <label id="nlp_mode_label">NLP Mode</label>
+                <input type="checkbox" name="nlp_switch" id="nlp_switch" checked=true>
+            </form>
         </div>
     </div>
 
@@ -43,33 +47,21 @@
                 }}
                 <div id="{{=tabs[i]['id']}}" class="tab-pane fade {{=class_name}}">
                     <div id="{{=tabs[i]['id']}}_child"class="list-group">
-                        {{items_list=tabs[i]["items"]}}
-                        {{for j in range(len(items_list)):}}
-                            <a href="{{=items_list[j]['href']}}" class="list-group-item">
-                                <h4>{{=items_list[j]['href']}}</h4>
-                            </a>
-                        {{pass}}
+                        <!-- {{items_list=tabs[i]["items"]}} -->
+                        <!-- {{for j in range(len(items_list)):}} -->
+                            <!-- <a href="{{=items_list[j]['href']}}" class="list-group-item"> -->
+                                <!-- <h4>{{=items_list[j]['href']}}</h4> -->
+                            <!-- </a> -->
+                        <!-- {{pass}} -->
                     </div>
                 </div>
             {{pass}}
         </div>
         <ul id="paginator" class="pagination">
-            {{import math}}
-            {{num_pages=int(math.ceil(num_results/10.0))}}
-            {{for i in range(num_pages):}}
-                {{
-                    if i==0:
-                        class_name="active"
-                    else:
-                        class_name=""
-                    pass
-                }}
-                <li class="{{=class_name}}"><a href="#">{{=i+1}}</a></li>
-            {{pass}}
+            <!-- <li class="{{=class_name}}"><a href="#">{{=i+1}}</a></li> -->
         </ul>
     </div>
 
-    <div class="flash">{{=response.flash or ''}}</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="{{=URL('static','bootstrap/js/bootstrap.min.js')}}"></script>
     <script src="{{=URL('static','bootstrap/js/bootstrap-switch.min.js')}}"></script>
@@ -77,13 +69,38 @@
     <script type="text/javascript" charset="utf-8">
         $("#nlp_switch").bootstrapSwitch();
 
-        $("#paginator a").click(function(){
+        function get_page_num(){
+            return $("#paginator").children("li.active").eq(0).text();
+        }
+
+        function load_for_page_num(page_num){
+            if(page_num==0)
+                page_num=get_page_num();
+            {{for i in range(len(tabs)):}}
+                ajax("{{=URL('search','get_results')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked")+"&type={{=tabs[i]['id']}}&page_no="+page_num,[],"{{=tabs[i]['id']}}_child");
+            {{pass}}
+            return false
+        }
+
+        function build_pagination(){
+            ajax("{{=URL('search','build_paginator')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked"),[],"paginator");
+            return false;
+        }
+
+        $("#paginator").on("click","a",function(){
             $(this).parent().parent().children().removeClass("active");
             $(this).parent().addClass("active");
-            {{for i in range(len(tabs)):}}
-                ajax("{{=URL('search','get_results')}}?type={{=tabs[i]['id']}}&page_no="+$(this).text(),[],"{{=tabs[i]['id']}}_child")
-            {{pass}}
+            load_for_page_num(0);
+            return false;
+            <!-- load_for_page_num($(this).text()); -->
         });
+
+        $("#search_form").submit(function(){
+            build_pagination();
+            load_for_page_num(0);
+            return false;// this return false is for prevention of default behaiviour
+        });
+
     </script>
 </body>
 </html>
