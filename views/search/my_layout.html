@@ -17,22 +17,20 @@
     </div>
 
     <div class="container" id="body_container">
-        <ul class="nav nav-tabs">
-            <li><a data-toggle="tab" href="#tf">TF</a></li>
+        <ul id="tabs" class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#tf">TF</a></li>
             <li><a data-toggle="tab" href="#tf_idf">TF-IDF</a></li>
             <li><a data-toggle="tab" href="#bm25">BM25</a></li>
         </ul>
         <div class="tab-content">
-            <div id="tf" class="tab-pane">Tab1</div>
-            <div id="tf_idf" class="tab-pane">Tab2</div>
-            <div id="bm25" class="tab-pane">Tab3</div>
+            <div id="tf" class="tab-pane active fade in">Tab1</div>
+            <div id="tf_idf" class="tab-pane fade">Tab2</div>
+            <div id="bm25" class="tab-pane fade">Tab3</div>
         </div>
     </div>
 
     <div class="flash">{{=response.flash or ''}}</div>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="{{=URL('static',bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="{{=URL('static','bootstrap/js/bootstrap.min.js')}}"></script>
 </body>
 </html>
