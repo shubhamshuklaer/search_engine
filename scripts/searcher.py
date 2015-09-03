@@ -1,26 +1,72 @@
 from whoosh.qparser import QueryParser
 from whoosh import index
 from whoosh import scoring
+from whoosh.lang.porter import stem
+
+def operate(L,op,R):
+    ret = []
+    if op=='&':
+        ret = [val for val in L if val in R]
+    if op=='|':
+        ret = list(set(L + R))
+    if op=='~':
+        for text in L:
+            flag = 0
+            for tt in R:
+                if tt==text:
+                    flag = 1
+            if flag==0:
+                ret.append(text)
+    return ret
 
 def search(id, querystring,scoring):
     qp = QueryParser("content", schema=id.schema)
     q = qp.parse(unicode(querystring))
 
+    l = []
     with id.searcher(weighting=scoring) as s:
         results = s.search(q)
         for res in results:
-            print res['path'], res.score
+            #print res['path'], res.score
+            l.append(res['path'])
+    return l
+
+def multiwordquery(id, querystring, scoring):
+    #print "querystring length = " + str(len(querystring))
+    #print querystring
+    if len(querystring)==1:
+        return search(id,querystring,scoring)
+
+    else :
+        left = querystring[0]
+        op = querystring[1]
+        rem = querystring[2:]
+        left_list = search(id,left,scoring)
+        right_list = multiwordquery(id,rem,scoring)
+        ret_list = operate(left_list, op, right_list)
+        return ret_list
+
+def multiwordquery_driver(id,x):
+    x = stem(x)
+    xx = x.split(' ')
+    return multiwordquery(id,x,scoring.TF_IDF())
 
 def main():
     id = index.open_dir("/home/v_akshay/Desktop/index")
     while (1<2):
         x = raw_input()
-        print "TF IDF LIST "
-        search(id,x,scoring.TF_IDF())
+        xx = x.split(' ')
+        #return multiwordquery(id,x,scoring.TF_IDF())
+
+        #print "TF IDF LIST "
+        #print multiwordquery_driver(id,x)
 
         print "TF LIST"
-        search(id,x,scoring.Frequency())
+        data = search(id,xx,scoring.Frequency())
+        for link in data:
+            print link
 
-        print "BM25 LIST"
-        search(id,x,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
+        '''print "BM25 LIST"
+        print multiwordquery(id,xx,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
+        '''
 main()
