@@ -6,7 +6,7 @@ from whoosh.qparser import QueryParser
 import BeautifulSoup
 from BeautifulSoup import BeautifulSoup
 
-BASEDIR = "/home/v_akshay/Desktop/version2.0/"
+BASEDIR = "/home/shubham/Dropbox/Library/7th_sem_lab/ir/Search_Engine/scripts/"
 
 templist = []
 doclist = []

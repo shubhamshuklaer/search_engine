@@ -1,6 +1,9 @@
 # coding: utf8
 # try something like
 import math
+import sys
+sys.path.append("/home/shubham/Dropbox/Library/7th_sem_lab/ir/Search_Engine/scripts")
+from searcher import *
 def index():
     search_form=FORM(INPUT(_type="text",_name="search_query",_placeholder="Search term", \
             _id="search_bar",_class="form-control",requires=IS_NOT_EMPTY()),LABEL("NLP Mode",_id="nlp_mode_label"),INPUT(_type="checkbox", \
@@ -14,12 +17,15 @@ def index():
     tabs=[
             {"name":"TF","id":"tf"},
             {"name":"TF-IDF","id":"tf_idf"},
-            {"name":"BM25","id":"b25"},
+            {"name":"BM25","id":"bm_25"},
             ]
     return dict(tabs=tabs)
 
 def get_results():
-    return request.vars["type"]+" "+request.vars["page_no"]+" "+request.vars["search_bar"]+" "+request.vars["nlp_switch"]
+    if(request.vars["nlp_switch"]=="true"):
+        return str(search(None,request.vars["search_bar"],request.vars["type"].upper()))
+    else:
+        return str(multiwordquery_driver(None,request.vars["search_bar"]))
 
 def build_paginator():
     paginator=""

@@ -2,7 +2,7 @@ from whoosh.qparser import QueryParser
 from whoosh import index
 from whoosh import scoring
 from whoosh.lang.porter import stem
-BASEDIR = "/home/v_akshay/Desktop/version2.0/"
+BASEDIR = "/home/shubham/Dropbox/Library/7th_sem_lab/ir/Search_Engine/scripts/"
 
 def operate(L,op,R):
     ret = []
@@ -21,6 +21,7 @@ def operate(L,op,R):
     return ret
 
 def search(id, querystring,scoring_measure):
+    id = index.open_dir(BASEDIR+"index")
     qp = QueryParser("content", schema=id.schema)
     q = qp.parse(unicode(querystring))
 
@@ -58,26 +59,26 @@ def multiwordquery(id, querystring, scoring):
         return ret_list
 
 def multiwordquery_driver(id,x):
-    x = stem(x)
-    xx = x.split(' ')
-    return multiwordquery(id,x,"TF_IDF")
-
-def main():
+    # x = stem(x)
+    x = x.split(' ')
     id = index.open_dir(BASEDIR+"index")
-    while (1<2):
-        x = raw_input()
-        xx = x.split(' ')
-        #return multiwordquery(id,x,scoring.TF_IDF())
+    return multiwordquery(id,x,scoring.TF_IDF())
 
-        #print "TF IDF LIST "
-        #print multiwordquery_driver(id,x)
+# def main():
+    # id = index.open_dir(BASEDIR+"index")
+    # while (1<2):
+        # x = raw_input()
+        # xx = x.split(' ')
+        # return multiwordquery(id,x,scoring.TF_IDF()) 
+        # print "TF IDF LIST "
+        # print multiwordquery_driver(id,x)
 
-        print "TF LIST"
-        data = search(id,xx,"TF")
-        for link in data:
-            print link
+        # print "TF LIST"
+        # data = search(id,xx,"TF")
+        # for link in data:
+            # print link
 
-        '''print "BM25 LIST"
-        print multiwordquery(id,xx,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
-        '''
-main()
+        # '''print "BM25 LIST"
+        # print multiwordquery(id,xx,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
+        # '''
+# main()
