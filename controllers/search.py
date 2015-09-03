@@ -12,11 +12,11 @@ def index():
         response.flash=search_query
 
     tabs=[
-            {"name":"TF","id":"tf","items":[{"href":"fasdfas"},{"href":"adsfasdfsd"},{"href":"aaaaaa"}]},
-            {"name":"TF-IDF","id":"tf_idf","items":[{"href":"fasdfas"},{"href":"adsfasdfsd"},{"href":"aaaraa"}]},
-            {"name":"BM25","id":"b25","items":[{"href":"fasdfas"},{"href":"adsfasdfsd"},{"href":"aaaaad"}]}
+            {"name":"TF","id":"tf"},
+            {"name":"TF-IDF","id":"tf_idf"},
+            {"name":"BM25","id":"b25"},
             ]
-    return dict(search_form=search_form, tabs=tabs,num_results=11)
+    return dict(tabs=tabs)
 
 def get_results():
     return request.vars["type"]+" "+request.vars["page_no"]+" "+request.vars["search_bar"]+" "+request.vars["nlp_switch"]
