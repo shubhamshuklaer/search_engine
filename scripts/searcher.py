@@ -20,13 +20,7 @@ def operate(L,op,R):
                 ret.append(text)
     return ret
 
-def search(id, querystring,scoring_measure):
-    id = index.open_dir(BASEDIR+"index")
-    qp = QueryParser("content", schema=id.schema)
-    q = qp.parse(unicode(querystring))
-
-    l = []
-
+def get_scoring(scoring_measure):
     foo = scoring.Frequency()
 
     if scoring_measure=="TF_IDF":
@@ -35,6 +29,16 @@ def search(id, querystring,scoring_measure):
         foo = scoring.BM25()
     if scoring_measure=="TF":
         foo = scoring.Frequency()
+    return foo
+
+def search(id, querystring,scoring_measure):
+    id = index.open_dir(BASEDIR+"index")
+    qp = QueryParser("content", schema=id.schema)
+    q = qp.parse(unicode(querystring))
+
+    l = []
+    
+    foo=get_scoring(scoring_measure)
 
     with id.searcher(weighting=foo) as s:
         results = s.search(q)
@@ -43,26 +47,28 @@ def search(id, querystring,scoring_measure):
             l.append(res['path'])
     return l
 
-def multiwordquery(id, querystring, scoring):
+
+
+def multiwordquery(id, querystring, scoring_measure):
     #print "querystring length = " + str(len(querystring))
     #print querystring
     if len(querystring)==1:
-        return search(id,querystring,scoring)
+        return search(id,querystring,scoring_measure)
 
     else :
         left = querystring[0]
         op = querystring[1]
         rem = querystring[2:]
-        left_list = search(id,left,scoring)
-        right_list = multiwordquery(id,rem,scoring)
+        left_list = search(id,left,scoring_measure)
+        right_list = multiwordquery(id,rem,scoring_measure)
         ret_list = operate(left_list, op, right_list)
         return ret_list
 
 def multiwordquery_driver(id,x):
     # x = stem(x)
-    x = x.split(' ')
+    xx = x.split(' ')
     id = index.open_dir(BASEDIR+"index")
-    return multiwordquery(id,x,scoring.TF_IDF())
+    return multiwordquery(id,xx,"TF_IDF")
 
 # def main():
     # id = index.open_dir(BASEDIR+"index")
@@ -82,3 +88,4 @@ def multiwordquery_driver(id,x):
         # print multiwordquery(id,xx,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
         # '''
 # main()
+print(multiwordquery_driver(None,"led"))

@@ -22,10 +22,12 @@ def index():
     return dict(tabs=tabs)
 
 def get_results():
+    return str(multiwordquery_driver(None,"led"))
     if(request.vars["nlp_switch"]=="true"):
         return str(search(None,request.vars["search_bar"],request.vars["type"].upper()))
     else:
         return str(multiwordquery_driver(None,request.vars["search_bar"]))
+
 
 def build_paginator():
     paginator=""
