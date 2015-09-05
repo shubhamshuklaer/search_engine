@@ -2,7 +2,9 @@ from whoosh.qparser import QueryParser
 from whoosh import index
 from whoosh import scoring
 from whoosh.lang.porter import stem
-BASEDIR = "/home/shubham/Dropbox/Library/7th_sem_lab/ir/Search_Engine/scripts/"
+import os
+
+BASEDIR = os.path.dirname(os.path.abspath(__file__))+"/"
 
 def operate(L,op,R):
     ret = []
@@ -64,11 +66,11 @@ def multiwordquery(id, querystring, scoring_measure):
         ret_list = operate(left_list, op, right_list)
         return ret_list
 
-def multiwordquery_driver(id,x):
+def multiwordquery_driver(id,x,scoring_measure):
     # x = stem(x)
     xx = x.split(' ')
     id = index.open_dir(BASEDIR+"index")
-    return multiwordquery(id,xx,"TF_IDF")
+    return multiwordquery(id,xx,scoring_measure)
 
 # def main():
     # id = index.open_dir(BASEDIR+"index")
@@ -88,4 +90,3 @@ def multiwordquery_driver(id,x):
         # print multiwordquery(id,xx,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
         # '''
 # main()
-print(multiwordquery_driver(None,"led"))
