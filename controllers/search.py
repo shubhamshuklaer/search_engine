@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"..","scr
 import searcher
 # To prevent using older version of module because of caching
 reload(searcher)
+num_results_per_page=10
 def index():
     tabs=[
             {"name":"TF","id":"tf"},
@@ -19,9 +20,12 @@ def index():
 def get_results():
     results=get_results_from_searcher(request.vars["nlp_switch"],request.vars["search_bar"],request.vars["type"].upper())
     ret_html=""
-    for result in results:
-        ret_html+=str(LI(A(os.path.basename(result["path"]),_href=URL('search','display_page')+"?path="+result["path"]), \
-                SPAN(result["score"],_class="badge"),_class="list-group-item"))
+    page_num=int(request.vars["page_no"])
+    for i in range(len(results)):
+        if i+1> (page_num-1)*num_results_per_page and i+1<=page_num*num_results_per_page:
+            result=results[i]
+            ret_html+=str(LI(A(os.path.basename(result["path"]),_href=URL('search','display_page')+"?path="+result["path"]), \
+                    SPAN(result["score"],_class="badge"),_class="list-group-item"))
 
     return ret_html
 
@@ -51,7 +55,7 @@ def get_max_num_results(nlp_switch,search_bar):
 def build_paginator():
     paginator=""
     num_results=get_max_num_results(request.vars["nlp_switch"],request.vars["search_bar"])
-    num_pages=int(math.ceil(num_results/10.0))
+    num_pages=int(math.ceil(float(num_results)/num_results_per_page))
     for i in range(num_pages):
         if(i==0):
             class_name="active";

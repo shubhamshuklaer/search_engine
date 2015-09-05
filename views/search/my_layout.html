@@ -64,7 +64,10 @@
         $("#nlp_switch").bootstrapSwitch();
 
         function get_page_num(){
-            return $("#paginator").children("li.active").eq(0).text();
+            page_no=$("#paginator").children("li.active").eq(0).text();
+            if(page_no=="")// since paginator is loaded by ajax.. the paginator might not have been loaded when we make this call
+                return 1;
+            return page_no;
         }
 
         function load_for_page_num(page_num){
