@@ -6,6 +6,7 @@ import os
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))+"/"
 
+# TODO change operate function to work with scores
 def operate(L,op,R):
     ret = []
     if op=='&':
@@ -22,13 +23,14 @@ def operate(L,op,R):
                 ret.append(text)
     return ret
 
+# TODO check if BM25 is same as BM25F
 def get_scoring(scoring_measure):
     foo = scoring.Frequency()
 
     if scoring_measure=="TF_IDF":
         foo = scoring.TF_IDF()
     if scoring_measure=="BM_25":
-        foo = scoring.BM25()
+        foo = scoring.BM25F()
     if scoring_measure=="TF":
         foo = scoring.Frequency()
     return foo
@@ -47,7 +49,10 @@ def search(id, querystring,scoring_measure):
         results = s.search(q)
         for res in results:
             #print res['path'], res.score
-            l.append(res['path'])
+            temp=dict()
+            temp["path"]=res["path"]
+            temp["score"]=res.score
+            l.append(temp)
     return l
 
 

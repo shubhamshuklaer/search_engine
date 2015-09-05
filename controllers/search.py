@@ -17,15 +17,28 @@ def index():
     return dict(tabs=tabs)
 
 def get_results():
-    if(request.vars["nlp_switch"]=="true"):
-        return str(searcher.search(None,request.vars["search_bar"],request.vars["type"].upper()))
-    else:
-        return str(searcher.multiwordquery_driver(None,request.vars["search_bar"],request.vars["type"].upper()))
+    results=get_results_from_searcher(request.vars["nlp_switch"],request.vars["search_bar"],request.vars["type"].upper())
+    return str(results)
 
+def get_results_from_searcher(nlp_switch,search_bar,scoring_measure):
+    results=dict()
+    if(nlp_switch=="true"):
+        results= searcher.search(None,search_bar,scoring_measure)
+    else:
+        results= searcher.multiwordquery_driver(None,search_bar,scoring_measure)
+
+    return results
+
+def get_max_num_results(nlp_switch,search_bar):
+    len1=len(get_results_from_searcher(nlp_switch,search_bar,"TF"))
+    len2=len(get_results_from_searcher(nlp_switch,search_bar,"TF_IDF"))
+    len3=len(get_results_from_searcher(nlp_switch,search_bar,"BM_25"))
+    return len3
+    return max(len1,max(len2,len3))
 
 def build_paginator():
     paginator=""
-    num_results=11
+    num_results=get_max_num_results(request.vars["nlp_switch"],request.vars["search_bar"])
     num_pages=int(math.ceil(num_results/10.0))
     for i in range(num_pages):
         if(i==0):
