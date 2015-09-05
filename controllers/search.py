@@ -4,7 +4,10 @@ import math
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"..","scripts")))
-from searcher import *
+# from searcher import *
+import searcher
+# To prevent using older version of module because of caching
+reload(searcher)
 def index():
     tabs=[
             {"name":"TF","id":"tf"},
@@ -15,9 +18,9 @@ def index():
 
 def get_results():
     if(request.vars["nlp_switch"]=="true"):
-        return str(search(None,request.vars["search_bar"],request.vars["type"].upper()))
+        return str(searcher.search(None,request.vars["search_bar"],request.vars["type"].upper()))
     else:
-        return str(multiwordquery_driver(None,request.vars["search_bar"],request.vars["type"].upper()))
+        return str(searcher.multiwordquery_driver(None,request.vars["search_bar"],request.vars["type"].upper()))
 
 
 def build_paginator():
@@ -31,4 +34,5 @@ def build_paginator():
             class_name="";
         paginator+=str(LI(A(i+1,_href="#"),_class=class_name))
     return paginator
+
 

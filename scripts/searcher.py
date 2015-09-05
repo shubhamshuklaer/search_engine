@@ -34,6 +34,7 @@ def get_scoring(scoring_measure):
     return foo
 
 def search(id, querystring,scoring_measure):
+    # return BASEDIR
     id = index.open_dir(BASEDIR+"index")
     qp = QueryParser("content", schema=id.schema)
     q = qp.parse(unicode(querystring))
