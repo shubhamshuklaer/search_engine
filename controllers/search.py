@@ -18,7 +18,19 @@ def index():
 
 def get_results():
     results=get_results_from_searcher(request.vars["nlp_switch"],request.vars["search_bar"],request.vars["type"].upper())
-    return str(results)
+    ret_html=""
+    for result in results:
+        ret_html+=str(LI(A(os.path.basename(result["path"]),_href=URL('search','display_page')+"?path="+result["path"]), \
+                SPAN(result["score"],_class="badge"),_class="list-group-item"))
+
+    return ret_html
+
+def display_page():
+    data=""
+    with open (request.vars["path"], "r") as myfile:
+        data=myfile.read().replace('\n', '')
+
+    return data
 
 def get_results_from_searcher(nlp_switch,search_bar,scoring_measure):
     results=dict()
@@ -27,13 +39,13 @@ def get_results_from_searcher(nlp_switch,search_bar,scoring_measure):
     else:
         results= searcher.multiwordquery_driver(None,search_bar,scoring_measure)
 
+
     return results
 
 def get_max_num_results(nlp_switch,search_bar):
     len1=len(get_results_from_searcher(nlp_switch,search_bar,"TF"))
     len2=len(get_results_from_searcher(nlp_switch,search_bar,"TF_IDF"))
     len3=len(get_results_from_searcher(nlp_switch,search_bar,"BM_25"))
-    return len3
     return max(len1,max(len2,len3))
 
 def build_paginator():
