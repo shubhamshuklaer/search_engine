@@ -40,7 +40,6 @@ def display_page():
     return data
 
 def get_results_from_searcher(nlp_switch,search_bar,scoring_measure):
-    # index_id=cache.ram('index',lambda: index.open_dir(BASEDIR+"index"), time_expire=None)
     index_id=None
     results=dict()
     if(nlp_switch=="true"):

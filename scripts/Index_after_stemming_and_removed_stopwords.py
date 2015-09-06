@@ -69,19 +69,22 @@ def add_doc(writer, path):
     content = fileobj.read()
     fileobj.close()
     print content
-    content = beautify(content)
-    print "Scrapped ---------------------"
-    ##########Remove stop words####################
-    data = doRemoveStop(content)
-    #print data
-    #########Do stemming###########################
-    data = doStemming(data)
-    #content = content.decode('UTF-8','ignore')
-    writer.add_document(path=unicode(path), content=unicode(data))
+    try:
+        content = beautify(content)
+        print "Scrapped ---------------------"
+        ##########Remove stop words####################
+        data = doRemoveStop(content)
+        #print data
+        #########Do stemming###########################
+        data = doStemming(data)
+        #content = content.decode('UTF-8','ignore')
+        writer.add_document(path=unicode(path), content=unicode(data))
+    except:
+        return
 
 
 def main():
-    dirname = BASEDIR+"index/"
+    dirname = BASEDIR+"index2/"
     #build dovument list
     build_doclist(BASEDIR+"db")
     print doclist

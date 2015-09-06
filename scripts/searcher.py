@@ -74,7 +74,7 @@ def search(id, querystring,scoring_measure):
     foo=get_scoring(scoring_measure)
 
     with id.searcher(weighting=foo) as s:
-        results = s.search(q)
+        results = s.search(q,limit=10)
         for res in results:
             #print res['path'], res.score
             temp=dict()
@@ -123,3 +123,6 @@ def multiwordquery_driver(id,x,scoring_measure):
         # print multiwordquery(id,xx,scoring.BM25F(B=0.75, content_B=1.0, K1=1.5))
         # '''
 # main()
+# print("Hello")
+# print(search(None,"Welcome","TF"))
+
