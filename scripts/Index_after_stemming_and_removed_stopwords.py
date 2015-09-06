@@ -84,7 +84,7 @@ def add_doc(writer, path):
 
 
 def main():
-    dirname = BASEDIR+"index2/"
+    dirname = BASEDIR+"index1/"
     #build dovument list
     build_doclist(BASEDIR+"db")
     print doclist
