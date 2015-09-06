@@ -61,7 +61,11 @@ def doRemoveStop(s):
     return ret
 
 def doStemming(s):
-    return stem(s)
+    ret = ""
+    for text in s:
+        ret = ret + stem(s)
+        ret+=" "
+    return ret
 
 
 def add_doc(writer, path):
