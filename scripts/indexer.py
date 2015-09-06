@@ -17,9 +17,8 @@ def beautify(text):
     soup = BeautifulSoup(text)
 
     comments = soup.findAll(text=lambda text:isinstance(text, Comment))
-	#print comments
-	[comment.extract() for comment in comments]
-	
+    [comment.extract() for comment in comments]
+
     [s.extract()
      for s in soup
      (['style', 'script', '[document]', 'head', 'title'])]
