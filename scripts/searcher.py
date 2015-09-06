@@ -10,17 +10,45 @@ BASEDIR = os.path.dirname(os.path.abspath(__file__))+"/"
 def operate(L,op,R):
     ret = []
     if op=='&':
-        ret = [val for val in L if val in R]
+        for i in range(len(L)):
+            for j in range(len(R)):
+                if L[i]['path'] == R[j]['path']:
+                    temp=dict()
+                    temp["path"]=L[i]["path"]
+                    temp["score"]=float(L[i]["score"]+R[j]["score"])/2
+                    ret.append(temp)
+                    break
+
     if op=='|':
-        ret = list(set(L + R))
+
+        for i in range(len(L)):
+            ret.append(L[i])
+
+
+        for i in range(len(R)):
+            xx = R[i]["path"]
+            found = 0
+            for j in range(len(ret)):
+                if (ret[j]["path"]==xx):
+                    found = 1
+                    ret[j]["score"] = (ret[j]["score"] + R[i]["score"])/2.0
+
+            if found==0:
+                ret.append(R[i])
+
+
     if op=='~':
-        for text in L:
-            flag = 0
-            for tt in R:
-                if tt==text:
-                    flag = 1
-            if flag==0:
-                ret.append(text)
+        for i in range(len(L)):
+            found=0
+            for j in range(len(R)):
+                if L[i]['path'] == R[j]['path']:
+                    found=1
+                    break
+            if found==0:
+                temp=dict()
+                temp["path"]=L[i]["path"]
+                temp["score"]=L[i]["score"]
+                ret.append(temp)
     return ret
 
 # TODO check if BM25 is same as BM25F
@@ -42,7 +70,7 @@ def search(id, querystring,scoring_measure):
     q = qp.parse(unicode(querystring))
 
     l = []
-    
+
     foo=get_scoring(scoring_measure)
 
     with id.searcher(weighting=foo) as s:
@@ -75,7 +103,6 @@ def multiwordquery(id, querystring, scoring_measure):
 def multiwordquery_driver(id,x,scoring_measure):
     # x = stem(x)
     xx = x.split(' ')
-    id = index.open_dir(BASEDIR+"index")
     return multiwordquery(id,xx,scoring_measure)
 
 # def main():
@@ -83,7 +110,7 @@ def multiwordquery_driver(id,x,scoring_measure):
     # while (1<2):
         # x = raw_input()
         # xx = x.split(' ')
-        # return multiwordquery(id,x,scoring.TF_IDF()) 
+        # return multiwordquery(id,x,scoring.TF_IDF())
         # print "TF IDF LIST "
         # print multiwordquery_driver(id,x)
 

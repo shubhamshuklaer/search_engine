@@ -3,11 +3,14 @@
 import math
 import sys
 import os
+# from whoosh import index
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"..","scripts")))
 # from searcher import *
 import searcher
+import subtext
 # To prevent using older version of module because of caching
 reload(searcher)
+reload(subtext)
 num_results_per_page=10
 def index():
     tabs=[
@@ -37,11 +40,13 @@ def display_page():
     return data
 
 def get_results_from_searcher(nlp_switch,search_bar,scoring_measure):
+    # index_id=cache.ram('index',lambda: index.open_dir(BASEDIR+"index"), time_expire=None)
+    index_id=None
     results=dict()
     if(nlp_switch=="true"):
-        results= searcher.search(None,search_bar,scoring_measure)
+        results= searcher.search(index_id,search_bar,scoring_measure)
     else:
-        results= searcher.multiwordquery_driver(None,search_bar,scoring_measure)
+        results= searcher.multiwordquery_driver(index_id,search_bar,scoring_measure)
 
 
     return results

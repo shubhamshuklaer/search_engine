@@ -46,15 +46,23 @@ def get_schema():
 
 
 def add_doc(writer, path):
+    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
+    print(path)
+    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
     fileobj = open(path, "r")
     content = fileobj.read()
     fileobj.close()
+    if len(content)==0:
+        return
     print content
-    content = beautify(content)
-    print "Scrapped ---------------------"
-    print content
-    #content = content.decode('UTF-8','ignore')
-    writer.add_document(path=unicode(path), content=unicode(content))
+    try:
+        content = beautify(content)
+        print "Scrapped ---------------------"
+        print content
+        #content = content.decode('UTF-8','ignore')
+        writer.add_document(path=unicode(path), content=unicode(content))
+    except:
+        return
 
 
 def main():
