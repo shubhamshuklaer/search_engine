@@ -5,6 +5,8 @@ from whoosh.fields import Schema, ID, TEXT
 from whoosh.qparser import QueryParser
 import BeautifulSoup
 from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import Comment
+import re
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))+"/"
 
