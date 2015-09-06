@@ -6,7 +6,8 @@ from whoosh.qparser import QueryParser
 import BeautifulSoup
 from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import Comment
-import re
+from whoosh.analysis import StandardAnalyzer
+from whoosh.lang.porter import stem
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))+"/"
 
@@ -50,24 +51,33 @@ def get_schema():
     return Schema(path=ID(unique=True, stored=True), content=TEXT)
 
 
+def doRemoveStop(s):
+    ana = StandardAnalyzer()
+    data = [token.text for token in ana(unicode(s))]
+    ret = ""
+    for dd in data:
+        ret+=dd
+        ret+=" "
+    return ret
+
+def doStemming(s):
+    return stem(s)
+
+
 def add_doc(writer, path):
-    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
-    print(path)
-    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
     fileobj = open(path, "r")
     content = fileobj.read()
     fileobj.close()
-    if len(content)==0:
-        return
     print content
-    try:
-        content = beautify(content)
-        print "Scrapped ---------------------"
-        print content
-        #content = content.decode('UTF-8','ignore')
-        writer.add_document(path=unicode(path), content=unicode(content))
-    except:
-        return
+    content = beautify(content)
+    print "Scrapped ---------------------"
+    ##########Remove stop words####################
+    data = doRemoveStop(content)
+    #print data
+    #########Do stemming###########################
+    data = doStemming(data)
+    #content = content.decode('UTF-8','ignore')
+    writer.add_document(path=unicode(path), content=unicode(data))
 
 
 def main():
