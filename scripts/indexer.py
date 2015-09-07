@@ -8,6 +8,8 @@ from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import Comment
 import re
 
+cnt = 0
+
 BASEDIR = os.path.dirname(os.path.abspath(__file__))+"/"
 
 templist = []
@@ -47,23 +49,26 @@ def build_index(dirname):
 
 
 def get_schema():
-    return Schema(path=ID(unique=True, stored=True), content=TEXT)
+    return Schema(path=ID(unique=True, stored=True), content=TEXT(stored=True))
 
 
 def add_doc(writer, path):
-    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
+    #print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
+    global cnt
+    print cnt+1
+    cnt = cnt+1
     print(path)
-    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
+    #print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n\n\n\n\n")
     fileobj = open(path, "r")
     content = fileobj.read()
     fileobj.close()
     if len(content)==0:
         return
-    print content
+    #print content
     try:
         content = beautify(content)
         print "Scrapped ---------------------"
-        print content
+        #print content
         #content = content.decode('UTF-8','ignore')
         writer.add_document(path=unicode(path), content=unicode(content))
     except:
@@ -74,7 +79,7 @@ def main():
     dirname = BASEDIR+"index/"
     #build dovument list
     build_doclist(BASEDIR+"db")
-    print doclist
+    #print doclist
     build_index(dirname)
     print "thats it"
 
