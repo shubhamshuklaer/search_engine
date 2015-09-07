@@ -17,11 +17,17 @@
                 <input type="text" name="search_bar" placeholder="Search Term" id="search_bar" class="form-control">
                 <label id="nlp_mode_label">NLP Mode</label>
                 <input type="checkbox" name="nlp_switch" id="nlp_switch" checked=true>
+                <label id="processed_mode_label">Processed Mode</label>
+                <input type="checkbox" name="processed_switch" id="processed_switch" checked=true>
             </form>
         </div>
     </div>
 
     <div class="container" id="body_container">
+      {{for i in range(len(tabs)):}}
+          <div id="{{=tabs[i]['id']}}_lat"></div>
+      {{pass}}
+
         <!-- Tabs system uses bootstrap.min.js -->
         <ul class="nav nav-tabs">
             {{for i in range(len(tabs)):}}
@@ -54,6 +60,8 @@
         <ul id="paginator" class="pagination">
             <!-- <li class="{{=class_name}}"><a href="#">{{=i+1}}</a></li> -->
         </ul>
+        <button onclick="calc_score()">Analyze</button>
+        <div id="ndgc_res"></div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -62,6 +70,35 @@
     <script src="{{=URL('static','js/web2py.js')}}"></script>
     <script type="text/javascript" charset="utf-8">
         $("#nlp_switch").bootstrapSwitch();
+        $("#processed_switch").bootstrapSwitch();
+
+        function calc_score(){
+          var score=new Array(0.0,0.0,0.0);
+          var den = new Array(0.0,0.0,0.0);
+          var num = new Array(0.0,0.0,0.0);
+          var rel_arr=new Array([],[],[]);
+
+          {{for i in range(len(tabs)):}}
+              $("#{{=tabs[i]['id']}}").find(".map_k_checkbox").each(function(){
+                  den[{{=i}}]+=1.0;
+                  var str="true";
+                  if($.trim($(this).is(":checked"))=="true"){
+                      //score[{{=i}}]+=parseInt($(this).attr("id"));
+                      num[{{=i}}]+=1.0;
+                      score[{{=i}}] += (num[{{=i}}]/den[{{=i}}])
+                      rel_arr[{{=i}}].push(1);
+                  }else{
+                    rel_arr[{{=i}}].push(0);
+                  }
+              });
+          {{pass}}
+
+          ajax("{{=URL('search','calc_ndgc')}}?rel_arr="+JSON.stringify(rel_arr)+"&query_string="+$("#search_bar").val())
+          alert(score[0].toString()+"\n"+score[1].toString()+"\n"+score[2].toString()+"\n")
+            return false;
+        }
+
+
 
         function get_page_num(){
             page_no=$("#paginator").children("li.active").eq(0).text();
@@ -74,14 +111,20 @@
             if(page_num==0)
                 page_num=get_page_num();
             {{for i in range(len(tabs)):}}
-                ajax("{{=URL('search','get_results')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked")+"&type={{=tabs[i]['id']}}&page_no="+page_num,[],"{{=tabs[i]['id']}}_child");
+                ajax("{{=URL('search','get_results')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked")+"&processed_switch="+$("#processed_switch").is(":checked")+"&type={{=tabs[i]['id']}}&page_no="+page_num,[],"{{=tabs[i]['id']}}_child");
             {{pass}}
             return false
         }
 
         function build_pagination(){
-            ajax("{{=URL('search','build_paginator')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked"),[],"paginator");
+            ajax("{{=URL('search','build_paginator')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked")+"&processed_switch="+$("#processed_switch").is(":checked"),[],"paginator");
             return false;
+        }
+
+        function get_latency(){
+          {{for i in range(len(tabs)):}}
+              ajax("{{=URL('search','get_latency')}}?search_bar="+$("#search_bar").val()+"&nlp_switch="+$("#nlp_switch").is(":checked")+"&processed_switch="+$("#processed_switch").is(":checked")+"&type={{=tabs[i]['id']}}",[],"{{=tabs[i]['id']}}_lat");
+          {{pass}}
         }
 
         $("#paginator").on("click","a",function(){
@@ -93,8 +136,9 @@
         });
 
         $("#search_form").submit(function(){
-            build_pagination();
             load_for_page_num(0);
+            build_pagination();
+            get_latency();
             return false;// this return false is for prevention of default behaiviour
         });
 
