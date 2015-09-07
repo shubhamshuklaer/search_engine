@@ -51,9 +51,9 @@ def get_results_from_searcher(nlp_switch,search_bar,scoring_measure):
     return results
 
 def get_max_num_results(nlp_switch,search_bar):
-    len1=len(get_results_from_searcher(nlp_switch,search_bar,"TF"))
-    len2=len(get_results_from_searcher(nlp_switch,search_bar,"TF_IDF"))
-    len3=len(get_results_from_searcher(nlp_switch,search_bar,"BM_25"))
+    len1=len(get_results_from_searcher(nlp_switch,processed_switch,search_bar,"TF")["doc_list"])
+    len2=len(get_results_from_searcher(nlp_switch,processed_switch,search_bar,"TF_IDF")["doc_list"])
+    len3=len(get_results_from_searcher(nlp_switch,processed_switch,search_bar,"BM_25")["doc_list"])
     return max(len1,max(len2,len3))
 
 def build_paginator():
