@@ -74,7 +74,7 @@ def search(id, querystring,scoring_measure):
     foo=get_scoring(scoring_measure)
 
     with id.searcher(weighting=foo) as s:
-        results = s.search(q,limit=10)
+        results = s.search(q,limit=50)
         for res in results:
             #print res['path'], res.score
             temp=dict()
